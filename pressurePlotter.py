@@ -19,7 +19,7 @@ class  CustomWidget(pg.GraphicsWindow):
         self.data1 = np.array([])
         # self.curve1 = p1.plot(self.data1, pen=(1,3))
         self.curve1 = p1.plot(self.data1, pen=(0,167,255))
-        print(p1.setRange(yRange= (0,300)))
+        p1.setRange(yRange= (0,30))
         timer = pg.QtCore.QTimer(self)
         timer.timeout.connect(self.update)
         timer.start(200) # number of seconds (every 1000) for next update
