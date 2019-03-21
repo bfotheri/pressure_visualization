@@ -53,6 +53,14 @@ class MainUi(Ui_MainWindow):
               self.lowerCalLabel.show()
               self.calibrateClicked = True
 
+    def setUpperPoint(self):
+        pressure = int(self.upperCalField.toPlainText())
+        self.sensor.set_high_point(pressure)
+
+    def setLowerPoint(self):
+        pressure = int(self.lowerCalField.toPlainText())
+        self.sensor.set_low_point(pressure)
+
     def setupSignals(self):
         #Hide the pressure Value initially
         self.pressureValue.hide()
@@ -64,3 +72,5 @@ class MainUi(Ui_MainWindow):
         self.showCalibrationButtons()
         self.calibrateButton.clicked.connect(lambda:self.showCalibrationButtons())
         self.toggleButton.clicked.connect(lambda:self.toggleVisuals())
+        self.upperCalButton.clicked.connect(lambda:self.setUpperPoint())
+        self.lowerCalButton.clicked.connect(lambda:self.setLowerPoint())
