@@ -19,20 +19,20 @@ class PressureSensor:
         self.y_intercept = 0
 
     def set_high_point(self,pressure):
-        voltage = np.random.randint(300)
-        # voltage = self.chan.voltage #TODO: Read in and average multiple values to eliminate noise
+        # voltage = np.random.randint(300)
+        voltage = self.chan.voltage #TODO: Read in and average multiple values to eliminate noise
         self.high_point = (voltage,pressure)
         self.calibrate()
 
     def set_low_point(self,pressure):
-        # voltage = self.chan.voltage
-        voltage = np.random.randint(300)
+        voltage = self.chan.voltage
+        # voltage = np.random.randint(300)
         self.low_point = (voltage,pressure)
         self.calibrate()
 
     def get_pressure(self):
-        # voltage = self.chan.voltage
-        voltage = np.random.randint(300)
+        voltage = self.chan.voltage
+        # voltage = np.random.randint(300)
         return self.slope*voltage + self.y_intercept
 
     def calibrate(self):
