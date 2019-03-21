@@ -1,8 +1,8 @@
 import time
-# import board
-# import busio
-# import adafruit_ads1x15.ads1115 as ADS
-# from adafruit_ads1x15.analog_in import AnalogIn
+import board
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
 import numpy as np
 
 #TODO: Add some kind of error messaging for if the calibration points are done incorrectly
