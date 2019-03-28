@@ -33,7 +33,7 @@ class MainUi(Ui_MainWindow):
         pressure = self.sensor.get_pressure()
         extra = (pressure % self.disp_res)
         disp_pressure = pressure - extra + round(float(extra)/self.disp_res)*self.disp_res
-        self.pressureValue.setText(str(disp_pressure))
+        self.pressureValue.setText(str(int(disp_pressure)))
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
