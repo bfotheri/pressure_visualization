@@ -93,7 +93,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(24)
         self.calibrateButton.setFont(font)
-        self.calibrateButton.setStyleSheet("background-color: rgb(0, 167, 255);")
+        self.calibrateButton.setStyleSheet("background-color: rgb(0, 167, 255)")
         self.calibrateButton.setAutoDefault(False)
         self.calibrateButton.setDefault(False)
         self.calibrateButton.setFlat(False)
