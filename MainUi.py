@@ -13,17 +13,24 @@ class MainUi(Ui_MainWindow):
         self.counter = 0
         self.disp_res = 5 #Display resolution of 5 mmHg
         self.sensor = pressureSensor
+        font = QtGui.QFont()
+        self.font = font
+        self.logging = False
 
 
     def toggleVisuals(self):
         if(self.toggleStatus == 'graph'):
-            self.toggleButton.setText("Number")
+            self.font.setPointSize(36)
+            self.toggleButton.setFont(self.font)
+            self.toggleButton.setText("Graph")
             self.widget.hide()
             self.pressureValue.show()
             self.pressureUnitsLabel.show()
             self.toggleStatus = 'number'
         elif(self.toggleStatus == 'number'):
-            self.toggleButton.setText("Graph")
+            self.font.setPointSize(32)
+            self.toggleButton.setFont(self.font)
+            self.toggleButton.setText("Number")
             self.widget.show()
             self.pressureValue.hide()
             self.pressureUnitsLabel.hide()
@@ -37,6 +44,12 @@ class MainUi(Ui_MainWindow):
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
+              self.font.setPointSize(30)
+              self.calibrateButton.setFont(self.font)
+              self.calibrateButton.setText("Calibrate")
+              self.calibrateButton.setGeometry(QtCore.QRect(490, 20, 211, 81))
+              self.calibrateButton.setStyleSheet("background-color: rgb(0,167,255);")
+              self.logButton.show()
               self.upperCalButton.hide()
               self.upperCalField.hide()
               self.upperCalLabel.hide()
@@ -45,6 +58,12 @@ class MainUi(Ui_MainWindow):
               self.lowerCalLabel.hide()
               self.calibrateClicked = False
           else:
+              self.font.setPointSize(36)
+              self.calibrateButton.setFont(self.font)
+              self.calibrateButton.setText("Hide")
+              self.calibrateButton.setGeometry(QtCore.QRect(350, 20, 211, 81))
+              self.calibrateButton.setStyleSheet("background-color: rgb(0, 103, 147);")
+              self.logButton.hide()
               self.upperCalButton.show()
               self.upperCalField.show()
               self.upperCalLabel.show()
@@ -52,6 +71,16 @@ class MainUi(Ui_MainWindow):
               self.lowerCalField.show()
               self.lowerCalLabel.show()
               self.calibrateClicked = True
+
+    def startLogging(self):
+        if not self.logging:
+            self.logging = True
+            self.logButton.setText("Stop")
+            self.logButton.setStyleSheet("background-color: rgb(255,10,10);")
+        else:
+            self.logging = False
+            self.logButton.setText("Record")
+            self.logButton.setStyleSheet("background-color: rgb(0,167, 255);")
 
     def setUpperPoint(self):
         pressure = int(self.upperCalField.toPlainText())
@@ -74,3 +103,4 @@ class MainUi(Ui_MainWindow):
         self.toggleButton.clicked.connect(lambda:self.toggleVisuals())
         self.upperCalButton.clicked.connect(lambda:self.setUpperPoint())
         self.lowerCalButton.clicked.connect(lambda:self.setLowerPoint())
+        self.logButton.clicked.connect(lambda:self.startLogging())
