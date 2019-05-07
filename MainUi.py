@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Ui_MainWindow import Ui_MainWindow
 import numpy as np
+import csv
 
 class MainUi(Ui_MainWindow):
     def __init__(self,pressureSensor):
@@ -15,8 +16,9 @@ class MainUi(Ui_MainWindow):
         self.sensor = pressureSensor
         font = QtGui.QFont()
         self.font = font
-        self.logging = False
-
+        self.record = False
+        self.file = open('logging_file.csv', mode='w')
+        self.csv_writer = csv.writer(self.file)
 
     def toggleVisuals(self):
         if(self.toggleStatus == 'graph'):
@@ -41,6 +43,12 @@ class MainUi(Ui_MainWindow):
         extra = (pressure % self.disp_res)
         disp_pressure = pressure - extra + round(float(extra)/self.disp_res)*self.disp_res
         self.pressureValue.setText(str(int(disp_pressure)))
+        if self.record == True:
+            pressure = int(pressure)
+            #self.csv_writer.writerows([[pressure, pressure, pressure],[pressure, pressure, pressure]])
+            #print(pressure)
+        else:
+            pass
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
@@ -73,12 +81,12 @@ class MainUi(Ui_MainWindow):
               self.calibrateClicked = True
 
     def startLogging(self):
-        if not self.logging:
-            self.logging = True
+        if not self.record:
+            self.record = True
             self.logButton.setText("Stop")
             self.logButton.setStyleSheet("background-color: rgb(255,10,10);")
         else:
-            self.logging = False
+            self.record = False
             self.logButton.setText("Record")
             self.logButton.setStyleSheet("background-color: rgb(0,167, 255);")
 
