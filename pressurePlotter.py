@@ -1,7 +1,7 @@
 import pyqtgraph as pg
 import numpy as np
 
-class  CustomWidget(pg.GraphicsWindow):
+class  CustomPressWidget(pg.GraphicsWindow):
     pg.setConfigOption('background', (20, 20, 20))
     pg.setConfigOption('foreground', 'w')
     time1 = 0
@@ -27,24 +27,25 @@ class  CustomWidget(pg.GraphicsWindow):
         timer.start(200) # number of seconds (every 1000) for next update
 
     def update(self):
-        if (len(self.data1) < self.data_size):
-            pressure = self.p_sensor.get_pressure()
-            self.data1 = np.append(self.data1,pressure)
-            self.time1 += 0.2
-            self.time = np.append(self.time,self.time1)
-            self.curve1.setData(self.time, self.data1)
+        if(self.p_sensor is not None):
+            if (len(self.data1) < self.data_size):
+                pressure = self.p_sensor.get_pressure()
+                self.data1 = np.append(self.data1,pressure)
+                self.time1 += 0.2
+                self.time = np.append(self.time,self.time1)
+                self.curve1.setData(self.time, self.data1)
 
-        
-        else:                    # (see also: np.roll)
-            self.data1[:-1] = self.data1[1:]  # shift data in the array one sample left
-            self.data1[-1] = self.p_sensor.get_pressure()
-            # self.data1 = np.append(self.data1,self.p_sensor.get_pressure())
-            self.time1 += 0.2
-            self.time[:-1] = self.time[1:]
-            self.time[-1] = self.time1
-            # self.time = np.append(self.time,self.time1)
-            # self.curve1.setData(self.data1[-100:])
-            self.curve1.setData(self.time, self.data1)
+
+            else:                    # (see also: np.roll)
+                self.data1[:-1] = self.data1[1:]  # shift data in the array one sample left
+                self.data1[-1] = self.p_sensor.get_pressure()
+                # self.data1 = np.append(self.data1,self.p_sensor.get_pressure())
+                self.time1 += 0.2
+                self.time[:-1] = self.time[1:]
+                self.time[-1] = self.time1
+                self.curve1.setData(self.time, self.data1)
+        else:
+            pass
 
     def passSensor(self,sensor):
         self.p_sensor = sensor

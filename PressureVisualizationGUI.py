@@ -12,7 +12,7 @@ from PyQt5.QtGui import QIcon
 import sys
 # from Ui_MainWindow import Ui_MainWindow
 from MainUi import MainUi
-from Sensor import PressureSensor
+from Sensor import PressureSensor, TemperatureSensor
 
 # import numpy as np
 # import pyqtgraph as pg
@@ -21,10 +21,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
         pressureSensor = PressureSensor()
-        self.ui = MainUi(pressureSensor)
+        Therms = [TemperatureSensor(), TemperatureSensor(), TemperatureSensor(), TemperatureSensor()]
+        self.ui = MainUi(pressureSensor, Therms)
         self.ui.setupUi(self)
         self.ui.setupSignals()
-        self.move(-3,-30)
+        # self.move(-3,-30)
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
     application = ApplicationWindow()
