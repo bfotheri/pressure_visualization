@@ -23,9 +23,10 @@ class  CustomTempWidget(pg.GraphicsWindow):
         self.data = np.zeros([self.numTherms, 1])
         self.time = np.array([0])
         self.curve = []
+        red = 255
         for idx in range(self.numTherms):
-            mult = random() - 0.3
-            val = [mult*255 + 75, mult*64 + 25,0]
+            val = [red, (255-red)//2, (255-red)//2]
+            red -=50
             # self.curve.append(p.plot(self.time[idx],self.data[idx], pen=pg.mkPen((255,167,0),width=5)))
             self.curve.append(p.plot(self.time,self.data[idx], pen=pg.mkPen(val,width=2)))
         p.setRange(yRange = (0,60))

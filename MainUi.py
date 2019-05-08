@@ -16,7 +16,8 @@ class MainUi(Ui_MainWindow):
         self.timer2.timeout.connect(self.updateTemperature)
         self.timer2.start(200) # number of milliseconds (every 200) for next update
         self.counter = 0
-        self.disp_res = 5 #Display resolution of 5 mmHg
+        self.press_disp_res = 5 #Display resolution of 5 mmHg
+        self.temp_disp_res = 0.1 #Display resolution of 0.1 Degrees Celsius
         self.pressure_sensor = pressureSensor
         self.temperature_sensors = temperatureSensors
         font = QtGui.QFont()
@@ -68,8 +69,8 @@ class MainUi(Ui_MainWindow):
 
     def updatePressure(self):
         pressure = self.pressure_sensor.get_pressure()
-        extra = (pressure % self.disp_res)
-        disp_pressure = pressure - extra + round(float(extra)/self.disp_res)*self.disp_res
+        extra = (pressure % self.press_disp_res)
+        disp_pressure = pressure - extra + round(float(extra)/self.press_disp_res)*self.press_disp_res
         self.pressureValue.setText(str(int(disp_pressure)))
         if self.record == True:
             pressure = int(pressure)
@@ -79,20 +80,22 @@ class MainUi(Ui_MainWindow):
             pass
 
     def updateTemperature(self):
-        temp = self.pressure_sensor.get_pressure()
-        extra = (temp % self.disp_res)
-        disp_pressure = temp - extra + round(float(extra)/self.disp_res)*self.disp_res
-        self.temperatureValue0.setText(str(int(disp_pressure)))
-        self.temperatureValue1.setText(str(int(disp_pressure)))
-        self.temperatureValue2.setText(str(int(disp_pressure)))
-        self.temperatureValue3.setText(str(int(disp_pressure)))
+        disp_temp = []
+        for t_sensor in self.temperature_sensors:
+            temp = t_sensor.get_temperature()
+            extra = (temp % self.temp_disp_res)
+            temp = temp - extra + round(float(extra)/self.temp_disp_res)*self.temp_disp_res
+            disp_temp.append(temp)
+        self.temperatureValue0.setText('{:.3}'.format(disp_temp[0]))
+        self.temperatureValue1.setText('{:.3}'.format(disp_temp[1]))
+        self.temperatureValue2.setText('{:.3}'.format(disp_temp[2]))
+        self.temperatureValue3.setText('{:.3}'.format(disp_temp[3]))
+
         if self.record == True:
             pass
             # temp = int(temp)
             #self.csv_writer.writerows([[pressure, pressure, pressure],[pressure, pressure, pressure]])
             #print(pressure)
-        else:
-            pass
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
@@ -135,26 +138,40 @@ class MainUi(Ui_MainWindow):
             self.logButton.setStyleSheet("background-color: rgb(0,167, 255);")
 
     def setUpperPoint(self):
-        pressure = int(self.upperCalField.toPlainText())
-        self.pressure_sensor.set_high_point(pressure)
+        if(self.pressTempToggleStatus == 'pressure'):
+            pressure = int(self.upperCalField.toPlainText())
+            self.pressure_sensor.set_high_point(pressure)
+        elif(self.pressTempToggleStatus == 'temperature'):
+            for t_sensor in self.temperature_sensors:
+                temperature = float(self.upperCalField.toPlainText())
+                t_sensor.set_high_point(temperature)
 
     def setLowerPoint(self):
-        pressure = int(self.lowerCalField.toPlainText())
-        self.pressure_sensor.set_low_point(pressure)
+        if(self.pressTempToggleStatus == 'pressure'):
+            pressure = int(self.lowerCalField.toPlainText())
+            self.pressure_sensor.set_low_point(pressure)
+        elif(self.pressTempToggleStatus == 'temperature'):
+            for t_sensor in self.temperature_sensors:
+                temperature = float(self.lowerCalField.toPlainText())
+                t_sensor.set_low_point(temperature)
 
     def toggleTempPress(self):
         if(self.pressTempToggleStatus == 'pressure'):
             self.pressTempToggleButton.setText("Pressure")
             self.pressTempToggleButton.setStyleSheet("background-color: rgb(0,167, 255);")
             self.pressTempToggleStatus = 'temperature'
+            # self.calibrateButton.setStyleSheet("background-color: rgb(255, 127, 0);")
+            self.upperCalLabel.setText("Upper Temperature Point")
+            self.lowerCalLabel.setText("Lower Temperature Point")
 
             self.GUI_Title.setText('Temperature Monitor')
-            # if(self.)
         elif(self.pressTempToggleStatus == 'temperature'):
             self.pressTempToggleButton.setText("Temperature")
             self.pressTempToggleButton.setStyleSheet("background-color: rgb(255,167, 0);")
             self.pressTempToggleStatus = 'pressure'
-
+            # self.calibrateButton.setStyleSheet("background-color: rgb(0, 167, 255);")
+            self.upperCalLabel.setText("Upper Pressure Point")
+            self.lowerCalLabel.setText("Lower Pressure Point")
             self.GUI_Title.setText('Pressure Monitor')
 
         self.toggleVisuals(True)
@@ -165,11 +182,21 @@ class MainUi(Ui_MainWindow):
         self.temperatureValue2.hide()
         self.temperatureValue3.hide()
 
+        self.tempLabel0.hide()
+        self.tempLabel1.hide()
+        self.tempLabel2.hide()
+        self.tempLabel3.hide()
+
     def showTempBoxes(self):
         self.temperatureValue0.show()
         self.temperatureValue1.show()
         self.temperatureValue2.show()
         self.temperatureValue3.show()
+
+        self.tempLabel0.show()
+        self.tempLabel1.show()
+        self.tempLabel2.show()
+        self.tempLabel3.show()
 
     def setupSignals(self):
         #Hide the pressure Value initially

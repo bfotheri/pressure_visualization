@@ -103,4 +103,3 @@ class TemperatureSensor:
         file.write(str(self.slope)+'\n')
         file.write(str(self.y_intercept))
         file.close()
-        val = (random()*255,random()*255,random()*255)
