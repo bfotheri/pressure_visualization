@@ -21,7 +21,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(ApplicationWindow, self).__init__()
         pressureSensor = PressureSensor()
-        Therms = [TemperatureSensor(), TemperatureSensor(), TemperatureSensor(), TemperatureSensor()]
+        Therms = [TemperatureSensor(0), TemperatureSensor(1), TemperatureSensor(2), TemperatureSensor(3)] #The numbers correspond to the analog channels on the ADS1115
         self.ui = MainUi(pressureSensor, Therms)
         self.ui.setupUi(self)
         self.ui.setupSignals()
