@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Ui_MainWindow import Ui_MainWindow
 import numpy as np
 import csv
+import time
 
 class MainUi(Ui_MainWindow):
     def __init__(self,pressureSensor, temperatureSensors):
@@ -16,13 +17,15 @@ class MainUi(Ui_MainWindow):
         self.timer2.timeout.connect(self.updateTemperature)
         self.timer2.start(200) # number of milliseconds (every 200) for next update
         self.counter = 0
+        self.start_time = 0
         self.press_disp_res = 5 #Display resolution of 5 mmHg
         self.temp_disp_res = 0.1 #Display resolution of 0.1 Degrees Celsius
         self.pressure_sensor = pressureSensor
         self.temperature_sensors = temperatureSensors
         font = QtGui.QFont()
         self.font = font
-        self.record = False
+        self.recording = False
+        self.csv_store = []
         self.file = open('logging_file.csv', mode='w')
         self.csv_writer = csv.writer(self.file)
 
@@ -72,12 +75,8 @@ class MainUi(Ui_MainWindow):
         extra = (pressure % self.press_disp_res)
         disp_pressure = pressure - extra + round(float(extra)/self.press_disp_res)*self.press_disp_res
         self.pressureValue.setText(str(int(disp_pressure)))
-        if self.record == True:
-            pressure = int(pressure)
-            #self.csv_writer.writerows([[pressure, pressure, pressure],[pressure, pressure, pressure]])
-            #print(pressure)
-        else:
-            pass
+        if self.recording == True and self.pressTempToggleStatus == 'pressure':
+            self.csv_store.append([time.time() - self.start_time,pressure])
 
     def updateTemperature(self):
         disp_temp = []
@@ -95,12 +94,9 @@ class MainUi(Ui_MainWindow):
         self.temperatureValue3.setText('{:.3}'.format(disp_temp[3]))
         self.temperatureValue3.setStyleSheet(self.getTempStyleSheet(disp_temp[3]))
 
-        if self.record == True:
-            pass
-            # temp = int(temp)
-            #self.csv_writer.writerows([[pressure, pressure, pressure],[pressure, pressure, pressure]])
-            #print(pressure)
-    
+        if self.recording == True and self.pressTempToggleStatus == 'temperature':
+            self.csv_store.append([time.time() - self.start_time] + disp_temp)
+
     def getTempStyleSheet(self, disp_temp):
         scale = (disp_temp - 25)/25.0 #Our range is between 25 and 50 C so we minus fifteen and divide by the range
         if(scale < 0):
@@ -113,10 +109,6 @@ class MainUi(Ui_MainWindow):
         red = 255
         style = "color: rgb(" + str(red) + "," +  str(green) + "," + str(blue) + ");"
         return style
-        
-        
-        
-        
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
@@ -149,14 +141,26 @@ class MainUi(Ui_MainWindow):
               self.calibrateClicked = True
 
     def startLogging(self):
-        if not self.record:
-            self.record = True
+        if not self.recording:
+            if(self.pressTempToggleStatus == 'temperature'):
+                self.csv_store = [['Time (s)', 'Probe 1', 'Probe 2', 'Probe 3', 'Probe 4']]
+                self.start_time = time.time() + self.timer1.remainingTime()/1000.0
+            elif(self.pressTempToggleStatus == 'pressure'):
+                self.csv_store = [['Time (s)', 'mmHg']]
+                self.start_time = time.time() + self.timer2.remainingTime()/1000.0
+            self.recording = True
             self.logButton.setText("Stop")
             self.logButton.setStyleSheet("background-color: rgb(255,10,10);")
         else:
-            self.record = False
+            self.recording = False
             self.logButton.setText("Record")
             self.logButton.setStyleSheet("background-color: rgb(0,167, 255);")
+            input,ok = QtGui.QInputDialog.getText(QtWidgets.QWidget(), "Data Logging File","enter a file name")
+            if ok:
+                file = input + ".csv"
+                with open(file, "w+") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(self.csv_store)
 
     def setUpperPoint(self):
         if(self.pressTempToggleStatus == 'pressure'):
