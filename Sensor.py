@@ -40,8 +40,8 @@ class PressureSensor:
         self.calibrate()
 
     def get_pressure(self):
-        voltage = np.random.randint(self.range)
-        # voltage = self.chan.voltage
+        # voltage = np.random.randint(self.range)
+        voltage = self.chan.voltage
         return self.slope*voltage + self.y_intercept
 
     def calibrate(self):
