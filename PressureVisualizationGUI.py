@@ -25,7 +25,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui = MainUi(pressureSensor, Therms)
         self.ui.setupUi(self)
         self.ui.setupSignals()
-        # self.move(-3,-30)
+        self.move(-3,-30)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

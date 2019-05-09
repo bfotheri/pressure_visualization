@@ -87,15 +87,36 @@ class MainUi(Ui_MainWindow):
             temp = temp - extra + round(float(extra)/self.temp_disp_res)*self.temp_disp_res
             disp_temp.append(temp)
         self.temperatureValue0.setText('{:.3}'.format(disp_temp[0]))
+        self.temperatureValue0.setStyleSheet(self.getTempStyleSheet(disp_temp[0]))
         self.temperatureValue1.setText('{:.3}'.format(disp_temp[1]))
+        self.temperatureValue1.setStyleSheet(self.getTempStyleSheet(disp_temp[1]))
         self.temperatureValue2.setText('{:.3}'.format(disp_temp[2]))
+        self.temperatureValue2.setStyleSheet(self.getTempStyleSheet(disp_temp[2]))
         self.temperatureValue3.setText('{:.3}'.format(disp_temp[3]))
+        self.temperatureValue3.setStyleSheet(self.getTempStyleSheet(disp_temp[3]))
 
         if self.record == True:
             pass
             # temp = int(temp)
             #self.csv_writer.writerows([[pressure, pressure, pressure],[pressure, pressure, pressure]])
             #print(pressure)
+    
+    def getTempStyleSheet(self, disp_temp):
+        scale = (disp_temp - 25)/25.0 #Our range is between 25 and 50 C so we minus fifteen and divide by the range
+        if(scale < 0):
+            scale = 0
+            return "color: rgb(255,255,75);"
+        elif(scale > 1):
+            scale = 1
+        green = int(255*(1-scale))
+        blue = int(50*(1-scale))
+        red = 255
+        style = "color: rgb(" + str(red) + "," +  str(green) + "," + str(blue) + ");"
+        return style
+        
+        
+        
+        
 
     def showCalibrationButtons(self):
           if(self.calibrateClicked):
